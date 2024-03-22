@@ -35,8 +35,8 @@ class Core {
 
   updateEntityPositions(deltaTime) {
     this.entities.forEach((entity) => {
-      entity.position.x += entity.movementInput.x * entity.speed * deltaTime;
-      entity.position.y += entity.movementInput.y * entity.speed * deltaTime;
+      entity.position.x += entity.movement.x * entity.speed * deltaTime;
+      entity.position.y += entity.movement.y * entity.speed * deltaTime;
     });
   }
 
