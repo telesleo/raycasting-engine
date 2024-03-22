@@ -20,13 +20,24 @@ class Core {
 
   update() {
     const currentTime = performance.now();
-    const deltaTime = currentTime - this.lastFrameTime;
-    this.updateListeners.forEach(listener => {
+    const deltaTime = (currentTime - this.lastFrameTime) / 1000;
+    this.entities.forEach((entity) => {
+      entity.update(deltaTime);
+    });
+    this.updateListeners.forEach((listener) => {
       listener(deltaTime);
     });
     this.lastFrameTime = currentTime;
-    requestAnimationFrame(this.update);
+    this.updateEntityPositions(deltaTime);
     this.drawTopdownView();
+    requestAnimationFrame(this.update);
+  }
+
+  updateEntityPositions(deltaTime) {
+    this.entities.forEach((entity) => {
+      entity.position.x += entity.movementInput.x * entity.speed * deltaTime;
+      entity.position.y += entity.movementInput.y * entity.speed * deltaTime;
+    });
   }
 
   drawTopdownView() {
@@ -60,8 +71,9 @@ class Core {
       this.topdownContext.fillStyle = entity.color;
       this.topdownContext.beginPath();
       const radius = Math.floor(entity.size / 2 * tileWidth);
-      this.topdownContext.arc(
-        entity.position.x * tileWidth, entity.position.y * tileHeight, radius, 0, 2 * Math.PI
+      const xPosition = entity.position.x * tileWidth;
+      const yPosition = this.topdownCanvas.height - entity.position.y * tileHeight;
+      this.topdownContext.arc(xPosition, yPosition, radius, 0, 2 * Math.PI
       );
       this.topdownContext.fillStyle = entity.color;
       this.topdownContext.fill();
